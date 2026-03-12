@@ -8,7 +8,7 @@ from fastapi.openapi.models import OAuthFlows as OAuthFlowsModel
 from fastapi.security import OAuth2, OAuth2PasswordBearer
 from fastapi.security.utils import get_authorization_scheme_param
 from jose import JWTError, jwt
-from passlib.context import CryptContext
+import bcrypt
 
 from .. import models, schemas
 from ..config.config import settings
@@ -64,15 +64,20 @@ oauth2_scheme_with_cookies = OAuth2PasswordBearerWithCookie(
     tokenUrl=f"{settings.API_V1_STR}/login/access-token"
 )
 
-password_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
 
 def get_hashed_password(password: str) -> str:
-    return password_context.hash(password)
+    """Hash a plain password returning a utf-8 string."""
+    hashed = bcrypt.hashpw(password.encode("utf-8"), bcrypt.gensalt())
+    return hashed.decode("utf-8")
 
 
 def verify_password(password: str, hashed_pass: str) -> bool:
-    return password_context.verify(password, hashed_pass)
+    """Verify a plain password against an existing hash."""
+    try:
+        return bcrypt.checkpw(password.encode("utf-8"), hashed_pass.encode("utf-8"))
+    except ValueError:
+        return False
 
 
 async def authenticate_user(email: str, password: str) -> models.User | None:
