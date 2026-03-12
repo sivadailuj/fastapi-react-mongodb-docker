@@ -8,6 +8,16 @@ from motor.motor_asyncio import AsyncIOMotorClient
 from .auth.auth import get_hashed_password
 from .config.config import settings
 from .models.users import User
+from .models.clients import Client
+from .models.frames import Frame
+from .models.inventory import Inventory
+from .models.manufacturing import Manufacturing
+from .models.materials import Material
+from .models.orders import Order
+from .models.packages import Package
+from .models.projects import Project
+from .models.shipments import Shipment
+from .models.suppliers import Supplier
 from .routers.api import api_router
 
 
@@ -21,7 +31,20 @@ async def lifespan(app: FastAPI):
         password=settings.MONGO_PASSWORD,
     )
     await init_beanie(
-        database=app.state.client[settings.MONGO_DB], document_models=[User]
+        database=app.state.client[settings.MONGO_DB],
+        document_models=[
+            User,
+            Supplier,
+            Client,
+            Frame,
+            Inventory,
+            Manufacturing,
+            Material,
+            Order,
+            Package,
+            Project,
+            Shipment,
+        ],
     )
 
     user = await User.find_one({"email": settings.FIRST_SUPERUSER})

@@ -2,6 +2,7 @@ import random
 import string
 
 from httpx import AsyncClient
+from pydantic import BaseModel
 
 from app.auth.auth import create_access_token, get_hashed_password
 from app.config.config import settings
@@ -45,3 +46,17 @@ async def create_test_user() -> User:
     user = User(email=email, hashed_password=hashed_password)
     await user.create()
     return user
+
+
+def verify_update_data(
+    create_data: BaseModel, update_data: BaseModel, ret_data: BaseModel
+):
+    create_keys = create_data.model_dump(exclude_unset=True).keys()
+    update_keys = update_data.model_dump(exclude_unset=True).keys()
+    for field, value in ret_data:
+        if field in update_keys:
+            assert value == getattr(update_data, field)
+        elif field in create_keys:
+            assert value == getattr(create_data, field)
+        else:
+            pass
