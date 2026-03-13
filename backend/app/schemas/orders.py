@@ -1,7 +1,24 @@
 from datetime import datetime, date
+from enum import Enum
 from uuid import UUID
 
 from pydantic import BaseModel, Field, model_validator
+
+
+class OrderStatus(Enum):
+    """
+    Enum for the status of an order.
+    """
+
+    IN_PLANNING = "in_planning"
+    QUEUED = "queued"
+    IN_RAWMATERIALS = "in_rawmaterials"
+    IN_MANUFACTURING = "in_manufacturing"
+    IN_ASSEMBLY = "in_assembly"
+    IN_PACKAGING = "in_packaging"
+    IN_SHIPPING = "in_shipping"
+    CANCELLED = "cancelled"
+    COMPLETED = "completed"
 
 
 class OrderBase(BaseModel):
@@ -27,7 +44,7 @@ class OrderBase(BaseModel):
         ..., description="The planned start date for the order."
     )
     planned_end_date: date = Field(..., description="The planned end date for the order.")
-    status: str = Field(..., description="The status of the order.")
+    status: OrderStatus = Field(..., description="The status of the order.")
 
     @model_validator(mode="after")
     def _validate_dates(self):
@@ -73,7 +90,7 @@ class OrderUpdate(BaseModel):
     planned_end_date: date | None = Field(
         default=None, description="The planned end date for the order."
     )
-    status: str | None = Field(default=None, description="The status of the order.")
+    status: OrderStatus | None = Field(default=None, description="The status of the order.")
 
 
 class Order(OrderBase):

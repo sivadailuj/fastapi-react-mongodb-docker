@@ -8,6 +8,7 @@ from datetime import datetime
 from app.schemas import InventoryCreate as Create
 from app.schemas import InventoryUpdate as Update
 from app.schemas import Inventory as Schema
+from app.schemas.inventory import InventoryStatus
 
 from ..utils import verify_update_data
 
@@ -23,7 +24,7 @@ create_data = Create(
     receipt_date=datetime.now().replace(microsecond=0),
     row="1",
     supplier_uuid=UUID(int=1),
-    status="in_inventory",
+    status=InventoryStatus.IN_INVENTORY,
     width_inches="10",
     bay="1",
     bl="12345",
@@ -41,7 +42,7 @@ update_data = Update(
     receipt_date=datetime.now().replace(microsecond=0),
     row="2",
     supplier_uuid=UUID(int=2),
-    status="in_inventory",
+    status=InventoryStatus.CHECKED_OUT,
     width_inches="20",
     bay="2",
     bl="43215",

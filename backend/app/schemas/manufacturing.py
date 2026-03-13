@@ -1,7 +1,19 @@
 from datetime import datetime
+from enum import Enum
 from uuid import UUID
 
 from pydantic import BaseModel, Field
+
+
+class ManufacturingStatus(Enum):
+    """
+    Enum for manufacturing status.
+    """
+
+    QUEUED = "queued"
+    IN_PROGRESS = "in_progress"
+    CANCELLED = "cancelled"
+    COMPLETED = "completed"
 
 
 class ManufacturingBase(BaseModel):
@@ -21,7 +33,9 @@ class ManufacturingBase(BaseModel):
     material_uuid: UUID = Field(
         ..., description="The material associated with the manufacturing item."
     )
-    status: str = Field(..., description="The status of the manufacturing item.")
+    status: ManufacturingStatus = Field(
+        ..., description="The status of the manufacturing item."
+    )
 
 
 class ManufacturingCreate(ManufacturingBase):
@@ -55,7 +69,7 @@ class ManufacturingUpdate(ManufacturingBase):
     material_uuid: UUID | None = Field(
         default=None, description="The material associated with the manufacturing item."
     )
-    status: str | None = Field(
+    status: ManufacturingStatus | None = Field(
         default=None, description="The status of the manufacturing item."
     )
 

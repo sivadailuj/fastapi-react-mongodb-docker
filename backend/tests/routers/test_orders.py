@@ -8,6 +8,7 @@ from datetime import date
 from app.schemas import OrderCreate as Create
 from app.schemas import OrderUpdate as Update
 from app.schemas import Order as Schema
+from app.schemas.orders import OrderStatus
 
 from ..utils import verify_update_data
 
@@ -25,7 +26,7 @@ create_data = Create(
     level="1",
     planned_start_date=date.today(),
     planned_end_date=date.today(),
-    status="in_assembly",
+    status=OrderStatus.IN_ASSEMBLY,
 )
 
 update_data = Update(
@@ -39,7 +40,7 @@ update_data = Update(
     level="2",
     # planned_start_date=date.today(),
     # planned_end_date=date.today(),
-    status="in_rawmaterials",
+    status=OrderStatus.IN_RAWMATERIALS,
 )
 
 

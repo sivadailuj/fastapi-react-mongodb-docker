@@ -1,10 +1,12 @@
 from typing import Annotated
 from uuid import UUID, uuid4
 
-from ..schemas import Address
 from beanie import Document, Indexed
 from pydantic import Field
 import datetime
+
+from ..schemas import Address
+from ..schemas.shipments import ShipmentStatus
 
 
 class Shipment(Document):
@@ -25,7 +27,7 @@ class Shipment(Document):
     emergency_contact_phone: str
     osfc_address: Address
     delivery_terms: str
-    status: str
+    status: Annotated[ShipmentStatus, Field(default=ShipmentStatus.QUEUED), Indexed()]
     last_updated: datetime.datetime = Field(default_factory=datetime.datetime.now)
 
     class Settings:

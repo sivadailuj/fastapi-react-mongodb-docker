@@ -1,7 +1,20 @@
 from datetime import datetime
+from enum import Enum
 from uuid import UUID
 
 from pydantic import BaseModel, Field
+
+
+class FrameStatus(Enum):
+    """
+    Enum for the status of a frame.
+    """
+
+    QUEUED = "queued"
+    IN_PROGRESS = "in_progress"
+    IN_REVIEW = "in_review"
+    CANCELLED = "cancelled"
+    COMPLETED = "completed"
 
 
 class FrameBase(BaseModel):
@@ -20,6 +33,9 @@ class FrameBase(BaseModel):
         ..., description="The assembly file associated with the frame."
     )
     machine: str = Field(..., description="The machine associated with the frame.")
+    status: FrameStatus = Field(
+        default=FrameStatus.QUEUED, description="The status of the frame."
+    )
 
 
 class FrameCreate(FrameBase):
@@ -55,6 +71,9 @@ class FrameUpdate(BaseModel):
     )
     machine: str | None = Field(
         default=None, description="The machine associated with the frame."
+    )
+    status: FrameStatus | None = Field(
+        default=None, description="The status of the frame."
     )
 
 

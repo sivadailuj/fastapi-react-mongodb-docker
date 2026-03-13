@@ -5,6 +5,8 @@ from beanie import Document, Indexed
 from pydantic import Field
 import datetime
 
+from ..schemas.manufacturing import ManufacturingStatus
+
 
 class Manufacturing(Document):
     uuid: Annotated[UUID, Field(default_factory=uuid4), Indexed(unique=True)]
@@ -14,7 +16,9 @@ class Manufacturing(Document):
     job_no: str
     rfy_file: str
     material_uuid: UUID
-    status: str
+    status: Annotated[
+        ManufacturingStatus, Field(default=ManufacturingStatus.QUEUED), Indexed()
+    ]
     last_updated: datetime.datetime = Field(default_factory=datetime.datetime.now)
 
     class Settings:

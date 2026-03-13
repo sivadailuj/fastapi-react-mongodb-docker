@@ -7,6 +7,7 @@ from app.config.config import settings
 from app.schemas import FrameCreate as CreateSchema
 from app.schemas import FrameUpdate as UpdateSchema
 from app.schemas import Frame as Schema
+from app.schemas.frames import FrameStatus
 
 from ..utils import verify_update_data
 
@@ -22,6 +23,7 @@ create_data = CreateSchema(
     nwt=123.45,
     assembly_file="file.doc",
     machine="MS123456",
+    status=FrameStatus.QUEUED,
 )
 
 update_data = UpdateSchema(
@@ -34,6 +36,7 @@ update_data = UpdateSchema(
     nwt=654.32,
     assembly_file="update_file.doc",
     machine="MS654321",
+    status=FrameStatus.IN_PROGRESS,
 )
 
 

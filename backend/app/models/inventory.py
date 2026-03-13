@@ -5,6 +5,8 @@ from beanie import Document, Indexed
 from pydantic import Field
 import datetime
 
+from ..schemas.inventory import InventoryStatus
+
 
 class Inventory(Document):
     uuid: Annotated[UUID, Field(default_factory=uuid4), Indexed(unique=True)]
@@ -17,7 +19,7 @@ class Inventory(Document):
     receipt_date: datetime.datetime
     row: str
     supplier_uuid: Annotated[UUID, Indexed()]
-    status: str
+    status: Annotated[InventoryStatus, Field(default=InventoryStatus.QUEUED), Indexed()]
     width_inches: str
     bay: str
     bl: str

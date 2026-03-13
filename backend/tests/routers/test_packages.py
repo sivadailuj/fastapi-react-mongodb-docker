@@ -7,6 +7,7 @@ from app.config.config import settings
 from app.schemas import PackageCreate as Create
 from app.schemas import PackageUpdate as Update
 from app.schemas import Package as Schema
+from app.schemas.packages import PackageStatus
 
 from ..utils import verify_update_data
 
@@ -20,7 +21,7 @@ create_data = Create(
     ppo_id="12345",
     name="pkg1",
     type="steel",
-    status="queued",
+    status=PackageStatus.QUEUED,
 )
 
 update_data = Update(
@@ -30,7 +31,7 @@ update_data = Update(
     # ppo_id="65432",
     name="pkg2",
     type="steel2",
-    status="in_progress",
+    status=PackageStatus.IN_PROGRESS,
 )
 
 

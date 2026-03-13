@@ -1,7 +1,26 @@
 from datetime import datetime
+from enum import Enum
 from uuid import UUID
 
 from pydantic import BaseModel, Field
+
+
+class InventoryStatus(Enum):
+    """
+    Enum for the status of an inventory item.
+    """
+
+    QUEUED = "queued"
+    IN_PROCUREMENT = "in_procurement"
+    ORDERED = "ordered"
+    RECEIVED = "received"
+    IN_INVENTORY = "in_inventory"
+    RESERVED = "reserved"
+    CHECKED_OUT = "checked_out"
+    IN_PRODUCTION = "in_production"
+    DEPLETED = "depleted"
+    DISPOSED = "disposed"
+    CANCELLED = "cancelled"
 
 
 class InventoryBase(BaseModel):
@@ -22,7 +41,7 @@ class InventoryBase(BaseModel):
     supplier_uuid: UUID = Field(
         ..., description="The supplier associated with the inventory item."
     )
-    status: str = Field(..., description="The status of the inventory item.")
+    status: InventoryStatus = Field(..., description="The status of the inventory item.")
     width_inches: str = Field(
         ..., description="The width in inches of the inventory item."
     )
@@ -68,7 +87,7 @@ class InventoryUpdate(BaseModel):
     supplier_uuid: UUID | None = Field(
         default=None, description="The supplier associated with the inventory item."
     )
-    status: str | None = Field(
+    status: InventoryStatus | None = Field(
         default=None, description="The status of the inventory item."
     )
     width_inches: str | None = Field(

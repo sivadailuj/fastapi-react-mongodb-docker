@@ -5,6 +5,8 @@ from beanie import Document, Indexed
 from pydantic import Field
 import datetime
 
+from ..schemas.materials import MaterialStatus
+
 
 class Material(Document):
     uuid: Annotated[UUID, Field(default_factory=uuid4), Indexed(unique=True)]
@@ -16,7 +18,7 @@ class Material(Document):
     machine: str
     required_nwt: float
     available_nwt: float
-    status: str
+    status: Annotated[MaterialStatus, Field(default=MaterialStatus.QUEUED), Indexed()]
     last_updated: datetime.datetime = Field(default_factory=datetime.datetime.now)
 
     class Settings:

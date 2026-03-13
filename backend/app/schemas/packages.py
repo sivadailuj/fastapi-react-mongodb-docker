@@ -1,7 +1,20 @@
 from datetime import datetime
+from enum import Enum
 from uuid import UUID
 
 from pydantic import BaseModel, Field
+
+
+class PackageStatus(Enum):
+    """
+    Enum for the status of a package.
+    """
+
+    QUEUED = "queued"
+    IN_PROGRESS = "in_progress"
+    PRINTING_LABEL = "printing_label"
+    CANCELLED = "cancelled"
+    COMPLETED = "completed"
 
 
 class PackageBase(BaseModel):
@@ -21,7 +34,7 @@ class PackageBase(BaseModel):
     ppo_id: str = Field(..., description="The PPO ID for the package.")
     name: str = Field(..., description="The name of the package.")
     type: str = Field(..., description="The type of the package.")
-    status: str = Field(..., description="The status of the package.")
+    status: PackageStatus = Field(..., description="The status of the package.")
 
 
 class PackageCreate(PackageBase):
@@ -49,7 +62,9 @@ class PackageUpdate(PackageBase):
     ppo_id: str | None = Field(default=None, description="The PPO ID for the package.")
     name: str | None = Field(default=None, description="The name of the package.")
     type: str | None = Field(default=None, description="The type of the package.")
-    status: str | None = Field(default=None, description="The status of the package.")
+    status: PackageStatus | None = Field(
+        default=None, description="The status of the package."
+    )
 
 
 class Package(PackageBase):

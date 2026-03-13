@@ -7,6 +7,7 @@ from app.config.config import settings
 from app.schemas import MaterialCreate as Create
 from app.schemas import MaterialUpdate as Update
 from app.schemas import Material as Schema
+from app.schemas.materials import MaterialStatus
 
 from ..utils import verify_update_data
 
@@ -22,7 +23,7 @@ create_data = Create(
     machine="TF000H/A10000",
     required_nwt=123.5,
     available_nwt=1234.5,
-    status="queued",
+    status=MaterialStatus.QUEUED,
 )
 
 update_data = Update(
@@ -34,7 +35,7 @@ update_data = Update(
     machine="TF000H/A10001",
     required_nwt=654.2,
     available_nwt=987.1,
-    status="in_progress",
+    status=MaterialStatus.IN_PROGRESS,
 )
 
 

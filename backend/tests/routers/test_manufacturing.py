@@ -7,6 +7,7 @@ from app.config.config import settings
 from app.schemas import ManufacturingCreate as Create
 from app.schemas import ManufacturingUpdate as Update
 from app.schemas import Manufacturing as Schema
+from app.schemas.manufacturing import ManufacturingStatus
 
 from ..utils import verify_update_data
 
@@ -19,7 +20,7 @@ create_data = Create(
     job_no="1",
     rfy_file="rfy.doc",
     material_uuid=UUID(int=3),
-    status="completed",
+    status=ManufacturingStatus.IN_PROGRESS,
 )
 
 update_data = Update(
@@ -29,7 +30,7 @@ update_data = Update(
     job_no="2",
     rfy_file="rfy2.doc",
     material_uuid=UUID(int=6),
-    status="completed",
+    status=ManufacturingStatus.COMPLETED,
 )
 
 

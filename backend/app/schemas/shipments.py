@@ -1,9 +1,21 @@
 from datetime import datetime
+from enum import Enum
 from uuid import UUID
 
 from pydantic import BaseModel, Field
 
 from .address import Address
+
+
+class ShipmentStatus(Enum):
+    """
+    Enum for status of a shipment.
+    """
+
+    QUEUED = "queued"
+    IN_PROGRESS = "in_progress"
+    CANCELLED = "cancelled"
+    COMPLETED = "completed"
 
 
 class ShipmentBase(BaseModel):
@@ -37,7 +49,7 @@ class ShipmentBase(BaseModel):
     delivery_terms: str = Field(
         ..., description="The delivery terms associated with the shipment."
     )
-    status: str = Field(..., description="The status of the shipment.")
+    status: ShipmentStatus = Field(..., description="The status of the shipment.")
 
 
 class ShipmentCreate(ShipmentBase):
@@ -95,7 +107,9 @@ class ShipmentUpdate(BaseModel):
     delivery_terms: str | None = Field(
         default=None, description="The delivery terms associated with the shipment."
     )
-    status: str | None = Field(default=None, description="The status of the shipment.")
+    status: ShipmentStatus | None = Field(
+        default=None, description="The status of the shipment."
+    )
 
 
 class Shipment(ShipmentBase):

@@ -8,6 +8,7 @@ from app.schemas import Address
 from app.schemas import ShipmentCreate as Create
 from app.schemas import ShipmentUpdate as Update
 from app.schemas import Shipment as Schema
+from app.schemas.shipments import ShipmentStatus
 
 from ..utils import verify_update_data
 
@@ -38,7 +39,7 @@ create_data = Create(
     emergency_contact_phone="1234567809",
     osfc_address=create_address,
     delivery_terms="123",
-    status="queued",
+    status=ShipmentStatus.QUEUED,
 )
 
 update_address = Address(
@@ -66,7 +67,7 @@ update_data = Update(
     emergency_contact_phone="9876543210",
     osfc_address=update_address,
     delivery_terms="321",
-    status="delivered",
+    status=ShipmentStatus.COMPLETED,
 )
 
 
