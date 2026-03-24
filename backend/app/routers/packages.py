@@ -64,12 +64,12 @@ async def update_package(
     except RevisionIdWasChanged:
         raise HTTPException(
             status_code=409,
-            detail="The package was updated by another request. Please try again.",
+            detail="Conflict: Package was updated by another process.",
         )
 
 
 @router.delete("/{package_uuid}", status_code=204)
-async def delete_package(package_uuid: UUID) -> Response:
+async def delete_package(package_uuid: UUID):
     """
     Delete a package by UUID.
     """
@@ -81,8 +81,8 @@ async def delete_package(package_uuid: UUID) -> Response:
 
 
 @router.get("", response_model=list[schemas.Package])
-async def list_packages(
-    limit: int | None = 25,
+async def get_packages(
+    limit: int | None = 20,
     offset: int | None = 0,
 ) -> Any:
     """
@@ -93,9 +93,9 @@ async def list_packages(
 
 
 @router.get("/shipment/{shipment_uuid}", response_model=list[schemas.Package])
-async def list_packages_by_shipment(
+async def get_packages_by_shipment(
     shipment_uuid: UUID,
-    limit: int | None = 10,
+    limit: int | None = 20,
     offset: int | None = 0,
 ) -> Any:
     """

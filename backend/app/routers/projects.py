@@ -65,12 +65,12 @@ async def update_project(
     except RevisionIdWasChanged:
         raise HTTPException(
             status_code=409,
-            detail="Project has been modified by another process. Please refresh and try again.",
+            detail="Conflict: Project was modified by another process.",
         )
 
 
 @router.delete("/{project_uuid}", status_code=204)
-async def delete_project(project_uuid: UUID) -> Response:
+async def delete_project(project_uuid: UUID):
     """
     Delete a project by UUID.
     """
@@ -82,8 +82,8 @@ async def delete_project(project_uuid: UUID) -> Response:
 
 
 @router.get("", response_model=list[schemas.Project])
-async def list_projects(
-    limit: int | None = 25,
+async def get_projects(
+    limit: int | None = 20,
     offset: int | None = 0,
 ) -> Any:
     """
@@ -95,9 +95,9 @@ async def list_projects(
 
 
 @router.get("/client/{client_uuid}", response_model=list[schemas.Project])
-async def list_projects_by_client(
+async def get_projects_by_client(
     client_uuid: UUID,
-    limit: int | None = 25,
+    limit: int | None = 20,
     offset: int | None = 0,
 ) -> Any:
     """

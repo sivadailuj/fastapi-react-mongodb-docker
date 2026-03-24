@@ -11,7 +11,7 @@ router = APIRouter()
 
 
 @router.post("", response_model=schemas.Inventory, status_code=201)
-async def create_inventory(inventory: schemas.InventoryCreate = Body(...)) -> Any:
+async def create_inventory_item(inventory: schemas.InventoryCreate = Body(...)) -> Any:
     """
     Create a new inventory item.
     """
@@ -29,7 +29,7 @@ async def create_inventory(inventory: schemas.InventoryCreate = Body(...)) -> An
 
 
 @router.get("/{inventory_uuid}", response_model=schemas.Inventory)
-async def get_inventory(inventory_uuid: UUID) -> Any:
+async def get_inventory_item(inventory_uuid: UUID) -> Any:
     """
     Get an inventory item by its UUID.
     """
@@ -40,7 +40,7 @@ async def get_inventory(inventory_uuid: UUID) -> Any:
 
 
 @router.patch("/{inventory_uuid}", response_model=schemas.Inventory)
-async def update_inventory(
+async def update_inventory_item(
     inventory_uuid: UUID,
     inventory_update: schemas.InventoryUpdate = Body(...),
 ) -> Any:
@@ -61,12 +61,13 @@ async def update_inventory(
         return inventory
     except RevisionIdWasChanged:
         raise HTTPException(
-            status_code=409, detail="Inventory item was updated by another process."
+            status_code=409,
+            detail="Conflict: Inventory item was updated by another process.",
         )
 
 
 @router.delete("/{inventory_uuid}", status_code=204)
-async def delete_inventory(inventory_uuid: UUID) -> Response:
+async def delete_inventory_item(inventory_uuid: UUID):
     """
     Delete an inventory item by its UUID.
     """
@@ -78,8 +79,8 @@ async def delete_inventory(inventory_uuid: UUID) -> Response:
 
 
 @router.get("", response_model=list[schemas.Inventory])
-async def list_inventory(
-    limit: int | None = 25,
+async def get_inventory_items(
+    limit: int | None = 20,
     offset: int | None = 0,
 ) -> Any:
     """
@@ -92,9 +93,9 @@ async def list_inventory(
 
 
 @router.get("/supplier/{supplier_uuid}", response_model=list[schemas.Inventory])
-async def list_inventory_by_supplier(
+async def get_inventory_items_by_supplier(
     supplier_uuid: UUID,
-    limit: int | None = 25,
+    limit: int | None = 20,
     offset: int | None = 0,
 ) -> Any:
     """

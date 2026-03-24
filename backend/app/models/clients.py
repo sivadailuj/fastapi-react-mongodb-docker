@@ -3,6 +3,7 @@ from uuid import UUID, uuid4
 
 from beanie import Document, Indexed
 from pydantic import EmailStr, Field
+import pymongo
 import datetime
 
 from ..schemas import Address
@@ -10,10 +11,10 @@ from ..schemas import Address
 
 class Client(Document):
     uuid: Annotated[UUID, Field(default_factory=uuid4), Indexed(unique=True)]
-    company: str
-    category: str
-    address: Address
-    mobile: str
+    company: str | None = None
+    category: str | None = None
+    address: Address | None = None
+    mobile: str | None = None
     email: EmailStr
     fax: Annotated[Optional[str], Field(default=None)]
     extension: Annotated[Optional[str], Field(default=None)]

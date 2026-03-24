@@ -1,9 +1,22 @@
 from datetime import datetime
+from enum import Enum
 from uuid import UUID
 
 from pydantic import BaseModel, Field
 
 from .address import Address
+
+
+class ConstructionType(Enum):
+    """
+    Enum for the construction type of a project.
+    """
+
+    FULL_CFS = "Full CFS"
+    HYBRID_CFS_CMU = "Hybrid CFS + CMU"
+    HYBRID_CFS_CONCRETE = "Hybrid CFS + Concrete"
+    HYBRID_CFS_WOOD = "Hybrid CFS + Wood"
+    HYBRID_CFS_HRS = "Hybrid CFS + HRS"
 
 
 class ProjectBase(BaseModel):
@@ -19,7 +32,7 @@ class ProjectBase(BaseModel):
     address: Address = Field(..., description="The address of the project.")
     sow: str = Field(..., description="The SOW for the project.")
     type: str = Field(..., description="The type of the project.")
-    construction_type: str = Field(
+    construction_type: ConstructionType = Field(
         ..., description="The construction type of the project."
     )
     models: str = Field(..., description="The models associated with the project.")
@@ -38,7 +51,7 @@ class ProjectCreate(ProjectBase):
     pass
 
 
-class ProjectUpdate(ProjectBase):
+class ProjectUpdate(BaseModel):
     """
     Properties to update a project. Visible by anyone.
     """
@@ -53,7 +66,7 @@ class ProjectUpdate(ProjectBase):
     )
     sow: str | None = Field(default=None, description="The SOW for the project.")
     type: str | None = Field(default=None, description="The type of the project.")
-    construction_type: str | None = Field(
+    construction_type: ConstructionType | None = Field(
         default=None, description="The construction type of the project."
     )
     models: str | None = Field(

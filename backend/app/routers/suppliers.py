@@ -65,7 +65,7 @@ async def update_supplier(
 
 
 @router.delete("/{supplier_uuid}", status_code=204, response_model=None)
-async def delete_supplier(supplier_uuid: UUID) -> Response:
+async def delete_supplier(supplier_uuid: UUID):
     """Delete a supplier by UUID."""
     supplier = await models.Supplier.find_one(models.Supplier.uuid == supplier_uuid)
     if not supplier:
@@ -75,8 +75,8 @@ async def delete_supplier(supplier_uuid: UUID) -> Response:
 
 
 @router.get("", response_model=list[schemas.Supplier])
-async def list_suppliers(
-    limit: int | None = 25,
+async def get_suppliers(
+    limit: int | None = 20,
     offset: int | None = 0,
 ) -> Any:
     """

@@ -46,7 +46,7 @@ class ManufacturingCreate(ManufacturingBase):
     pass
 
 
-class ManufacturingUpdate(ManufacturingBase):
+class ManufacturingUpdate(BaseModel):
     """
     Properties to update a manufacturing item. Visible by anyone.
     """

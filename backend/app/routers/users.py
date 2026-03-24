@@ -44,7 +44,7 @@ async def register_user(
 
 @router.get("", response_model=list[schemas.User])
 async def get_users(
-    limit: int | None = 10,
+    limit: int | None = 20,
     offset: int | None = 0,
     admin_user: models.User = Depends(get_current_active_superuser),
 ):

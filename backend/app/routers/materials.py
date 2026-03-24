@@ -64,12 +64,12 @@ async def update_material(
     except RevisionIdWasChanged:
         raise HTTPException(
             status_code=409,
-            detail="Material has been modified by another process. Please refresh and try again.",
+            detail="Conflict: Material was modified by another process.",
         )
 
 
 @router.delete("/{material_uuid}", status_code=204)
-async def delete_material(material_uuid: UUID) -> Response:
+async def delete_material(material_uuid: UUID):
     """
     Delete a material by UUID.
     """
@@ -82,7 +82,7 @@ async def delete_material(material_uuid: UUID) -> Response:
 
 @router.get("", response_model=list[schemas.Material])
 async def list_materials(
-    limit: int | None = 25,
+    limit: int | None = 20,
     offset: int | None = 0,
 ) -> Any:
     """
@@ -93,9 +93,9 @@ async def list_materials(
 
 
 @router.get("/order/{order_uuid}", response_model=list[schemas.Material])
-async def list_materials_by_order(
+async def get_materials_by_order(
     order_uuid: UUID,
-    limit: int | None = 10,
+    limit: int | None = 20,
     offset: int | None = 0,
 ) -> Any:
     """
@@ -111,9 +111,9 @@ async def list_materials_by_order(
 
 
 @router.get("/manufacturing/{manufacturing_uuid}", response_model=list[schemas.Material])
-async def list_materials_by_manufacturing(
+async def get_materials_by_manufacturing(
     manufacturing_uuid: UUID,
-    limit: int | None = 10,
+    limit: int | None = 20,
     offset: int | None = 0,
 ) -> Any:
     """

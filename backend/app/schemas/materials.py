@@ -44,7 +44,7 @@ class MaterialCreate(MaterialBase):
     pass
 
 
-class MaterialUpdate(MaterialBase):
+class MaterialUpdate(BaseModel):
     """
     Properties to update a material. Visible by anyone.
     """

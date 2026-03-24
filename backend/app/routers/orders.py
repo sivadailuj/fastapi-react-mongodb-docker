@@ -62,12 +62,12 @@ async def update_order(
     except RevisionIdWasChanged:
         raise HTTPException(
             status_code=409,
-            detail="Order has been modified by another process. Please refresh and try again.",
+            detail="Conflict: Order was modified by another process.",
         )
 
 
 @router.delete("/{order_uuid}", status_code=204)
-async def delete_order(order_uuid: UUID) -> Response:
+async def delete_order(order_uuid: UUID):
     """
     Delete an order by UUID.
     """
@@ -79,8 +79,8 @@ async def delete_order(order_uuid: UUID) -> Response:
 
 
 @router.get("", response_model=list[schemas.Order])
-async def list_orders(
-    limit: int | None = 25,
+async def get_orders(
+    limit: int | None = 20,
     offset: int | None = 0,
 ) -> Any:
     """
@@ -91,9 +91,9 @@ async def list_orders(
 
 
 @router.get("/project/{project_uuid}", response_model=list[schemas.Order])
-async def list_orders_by_project(
+async def get_orders_by_project(
     project_uuid: UUID,
-    limit: int | None = 25,
+    limit: int | None = 20,
     offset: int | None = 0,
 ) -> Any:
     """

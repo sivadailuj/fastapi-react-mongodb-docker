@@ -2,6 +2,7 @@ from typing import Annotated
 from uuid import UUID, uuid4
 
 from ..schemas import Address
+from .. schemas.projects import ConstructionType
 from beanie import Document, Indexed
 from pydantic import Field
 import datetime
@@ -15,7 +16,7 @@ class Project(Document):
     address: Address
     sow: str
     type: str
-    construction_type: str
+    construction_type: ConstructionType
     models: str
     phase_volleys: str
     stories: str

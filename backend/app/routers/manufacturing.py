@@ -11,7 +11,7 @@ router = APIRouter()
 
 
 @router.post("", response_model=schemas.Manufacturing, status_code=201)
-async def create_manufacturing(
+async def create_manufacturing_item(
     manufacturing: schemas.ManufacturingCreate = Body(...),
 ) -> Any:
     """
@@ -33,7 +33,7 @@ async def create_manufacturing(
 
 
 @router.get("/{manufacturing_uuid}", response_model=schemas.Manufacturing)
-async def get_manufacturing(manufacturing_uuid: UUID) -> Any:
+async def get_manufacturing_item(manufacturing_uuid: UUID) -> Any:
     """
     Get a manufacturing item by UUID.
     """
@@ -46,7 +46,7 @@ async def get_manufacturing(manufacturing_uuid: UUID) -> Any:
 
 
 @router.patch("/{manufacturing_uuid}", response_model=schemas.Manufacturing)
-async def update_manufacturing(
+async def update_manufacturing_item(
     manufacturing_uuid: UUID,
     manufacturing_update: schemas.ManufacturingUpdate = Body(...),
 ) -> Any:
@@ -77,7 +77,7 @@ async def update_manufacturing(
 
 
 @router.delete("/{manufacturing_uuid}", status_code=204)
-async def delete_manufacturing(manufacturing_uuid: UUID) -> Response:
+async def delete_manufacturing_item(manufacturing_uuid: UUID):
     """
     Delete a manufacturing item by UUID.
     """
@@ -91,8 +91,8 @@ async def delete_manufacturing(manufacturing_uuid: UUID) -> Response:
 
 
 @router.get("", response_model=list[schemas.Manufacturing])
-async def list_manufacturing(
-    limit: int | None = 25,
+async def get_manufacturing_items(
+    limit: int | None = 20,
     offset: int | None = 0,
 ) -> Any:
     """

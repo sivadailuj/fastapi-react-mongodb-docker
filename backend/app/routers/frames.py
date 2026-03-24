@@ -63,7 +63,7 @@ async def update_frame(
 
 
 @router.delete("/{frame_uuid}", status_code=204)
-async def delete_frame(frame_uuid: UUID) -> Response:
+async def delete_frame(frame_uuid: UUID):
     """
     Delete a frame by UUID.
     """
@@ -75,8 +75,8 @@ async def delete_frame(frame_uuid: UUID) -> Response:
 
 
 @router.get("", response_model=list[schemas.Frame])
-async def list_frames(
-    limit: int | None = 25,
+async def get_frames(
+    limit: int | None = 20,
     offset: int | None = 0,
 ) -> Any:
     """
@@ -87,9 +87,9 @@ async def list_frames(
 
 
 @router.get("/package/{package_uuid}", response_model=list[schemas.Frame])
-async def list_frames_by_package(
+async def get_frames_by_package(
     package_uuid: UUID,
-    limit: int | None = 25,
+    limit: int | None = 20,
     offset: int | None = 0,
 ) -> Any:
     """

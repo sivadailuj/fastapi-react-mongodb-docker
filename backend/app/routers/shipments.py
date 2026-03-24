@@ -65,12 +65,12 @@ async def update_shipment(
     except RevisionIdWasChanged:
         raise HTTPException(
             status_code=409,
-            detail="The shipment has been modified by another process. Please refresh and try again.",
+            detail="Conflict: Shipment was modified by another process.",
         )
 
 
 @router.delete("/{shipment_uuid}", status_code=204)
-async def delete_shipment(shipment_uuid: UUID) -> Response:
+async def delete_shipment(shipment_uuid: UUID):
     """
     Delete a shipment by UUID.
     """
@@ -82,8 +82,8 @@ async def delete_shipment(shipment_uuid: UUID) -> Response:
 
 
 @router.get("", response_model=list[schemas.Shipment])
-async def list_shipments(
-    limit: int | None = 25,
+async def get_shipments(
+    limit: int | None = 20,
     offset: int | None = 0,
 ) -> Any:
     """
