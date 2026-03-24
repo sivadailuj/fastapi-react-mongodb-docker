@@ -17,8 +17,10 @@ create_address = Address(
     street="123 Main St", city="City", state="FL", zip_code="12345", country="US"
 )
 
+company_name = "Test Company"
+
 create_data = CreateSchema(
-    company="Test Company",
+    company=company_name,
     category="Test Category",
     address=create_address,
     mobile="1234567890",
@@ -93,3 +95,68 @@ async def test_delete(client: AsyncClient) -> None:
     assert response.status_code == 204
     response = await client.get(f"{settings.API_V1_STR}{PREFIX}/{create_json['uuid']}")
     assert response.status_code == 404
+
+
+@pytest.mark.anyio
+async def test_get_all(client: AsyncClient) -> None:
+    # Create multiple clients
+    for i in range(3):
+        response = await client.post(
+            f"{settings.API_V1_STR}{PREFIX}",
+            json=create_data.model_dump(mode="json"),
+        )
+        assert response.status_code == 201
+
+    # Get all clients
+    response = await client.get(f"{settings.API_V1_STR}{PREFIX}")
+    assert response.status_code == 200
+    ret_json = response.json()
+    assert isinstance(ret_json, dict)
+    assert len(ret_json["items"]) >= 3
+    assert ret_json["total"] >= 3
+
+
+@pytest.mark.anyio
+async def test_search(client: AsyncClient) -> None:
+    response = await client.post(
+        f"{settings.API_V1_STR}{PREFIX}", json=create_data.model_dump(mode="json")
+    )
+    assert response.status_code == 201
+    response = await client.get(f"{settings.API_V1_STR}{PREFIX}", params={"search": company_name})
+    assert response.status_code == 200
+    ret_json = response.json()
+    assert isinstance(ret_json, dict)
+    assert len(ret_json["items"]) == 1
+    assert ret_json["items"][0]["company"] == company_name
+
+
+@pytest.mark.anyio
+async def test_sort(client: AsyncClient) -> None:
+    # Create multiple clients with different company names
+    companies = ["Alpha", "Charlie", "Bravo"]
+    for company in companies:
+        data = CreateSchema(
+            company=company,
+            category="Test Category",
+            address=create_address,
+            mobile="1234567890",
+            email=f"{company.lower()}@example.com",
+        )
+        response = await client.post(
+            f"{settings.API_V1_STR}{PREFIX}", json=data.model_dump(mode="json")
+        )
+        assert response.status_code == 201
+
+    # Sort clients by company name in ascending order
+    response = await client.get(f"{settings.API_V1_STR}{PREFIX}", params={"sortBy": "company", "sortOrder": 1})
+    assert response.status_code == 200
+    ret_json = response.json()
+    sorted_companies = [client["company"] for client in ret_json["items"] ]
+    assert sorted_companies == sorted(companies)
+
+    # Sort clients by company name in descending order
+    response = await client.get(f"{settings.API_V1_STR}{PREFIX}", params={"sortBy": "company", "sortOrder": -1})
+    assert response.status_code == 200
+    ret_json = response.json()
+    sorted_companies_desc = [client["company"] for client in ret_json["items"]]
+    assert sorted_companies_desc == sorted(companies, reverse=True)

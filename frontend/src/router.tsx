@@ -8,6 +8,10 @@ import Register from './routes/register'
 import Root from './routes/root'
 import SSOLogin, { loader as ssoLoader } from './routes/sso.login'
 import Users, { loader as usersLoader } from './routes/users'
+import QR from './routes/qr'
+//import Clients, { loader as clientsLoader } from './routes/clients'
+import Clients from './routes/clients'
+import ProtectedRoute from './components/ProtectedRoute'
 
 export const routes = [
   {
@@ -15,7 +19,16 @@ export const routes = [
     Component: Root,
     errorElement: <ErrorPage />,
     children: [
-      { index: true, Component: Home, HydrateFallback: HydrateFallback, loader: homeLoader },
+      {
+        index: true,
+        element: (
+          <ProtectedRoute>
+            <Home />
+          </ProtectedRoute>
+        ),
+        loader: homeLoader,
+        HydrateFallback: HydrateFallback,
+      },
       {
         path: 'sso-login-callback',
         Component: SSOLogin,
@@ -23,7 +36,11 @@ export const routes = [
       },
       {
         path: 'profile',
-        Component: Profile,
+        element: (
+          <ProtectedRoute>
+            <Profile />
+          </ProtectedRoute>
+        ),
       },
       {
         path: 'login',
@@ -35,9 +52,30 @@ export const routes = [
       },
       {
         path: 'users',
-        Component: Users,
-        HydrateFallback: HydrateFallback,
+        element: (
+          <ProtectedRoute>
+            <Users />
+          </ProtectedRoute>
+        ),
         loader: usersLoader,
+        HydrateFallback: HydrateFallback,
+      },
+      {
+        path: 'qr',
+        element: (
+          <ProtectedRoute>
+            <QR />
+          </ProtectedRoute>
+        ),
+      },
+      {
+        path: 'clients',
+        element: (
+          <ProtectedRoute>
+            <Clients />
+          </ProtectedRoute>
+        ),
+        //loader: clientsLoader,
       },
     ],
   },
