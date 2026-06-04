@@ -22,7 +22,7 @@ class Inventory(Document):
     status: Annotated[InventoryStatus, Field(default=InventoryStatus.QUEUED), Indexed()]
     width_inches: str
     bay: str
-    bl: str
+    bi: str
     pl: str
     po: str
     last_updated: datetime.datetime = Field(default_factory=datetime.datetime.now)

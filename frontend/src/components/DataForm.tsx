@@ -6,7 +6,8 @@ import {
   DialogActions,
   TextField,
   Button,
-  Grid,
+  Box,
+  MenuItem,
 } from '@mui/material'
 import { Form, InputField, SelectOption } from '../models/form'
 
@@ -26,6 +27,7 @@ export default function DataForm<T extends Record<string, unknown>>({
   onSubmit,
 }: DataFormProps<T>) {
   const [asyncOptions, setAsyncOptions] = useState<Record<string, SelectOption[]>>({})
+  const [savedInitialValues, setSavedInitialValues] = useState<Partial<T>>(initialValues)
 
   const [formData, setFormData] = useState<Partial<T>>({
     ...initialValues,
@@ -33,11 +35,8 @@ export default function DataForm<T extends Record<string, unknown>>({
 
   useEffect(() => {
     setFormData({ ...initialValues })
+    setSavedInitialValues(initialValues)
   }, [initialValues])
-
-  // const handleChange = (name: string, value: unknown) => {
-  //   setFormData((prev) => ({ ...prev, [name]: value }))
-  // }
 
   const handleChange = (name: string, value: unknown, renderKey?: string) => {
     setFormData((prev) => {
@@ -70,6 +69,7 @@ export default function DataForm<T extends Record<string, unknown>>({
             rows={3}
             label={field.label}
             value={value}
+            disabled={field.disabled}
             onChange={(e) => handleChange(field.name, e.target.value, renderKey)}
           />
         )
@@ -82,12 +82,34 @@ export default function DataForm<T extends Record<string, unknown>>({
             fullWidth
             label={field.label}
             value={value}
+            disabled={field.disabled}
             onChange={(e) => handleChange(field.name, e.target.value, renderKey)}
+            sx={{
+              '& .MuiInputBase-root': {
+                minHeight: '56px',
+              },
+              '& .MuiInputBase-input': {
+                paddingRight: '32px',
+              },
+            }}
+            slotProps={{
+              select: {
+                MenuProps: {
+                  PaperProps: {
+                    sx: {
+                      '& .MuiMenuItem-root': {
+                        py: 1,
+                      },
+                    },
+                  },
+                },
+              },
+            }}
           >
             {options.map((opt) => (
-              <option key={opt.value} value={opt.value}>
+              <MenuItem key={opt.value} value={opt.value}>
                 {opt.label}
-              </option>
+              </MenuItem>
             ))}
           </TextField>
         )
@@ -100,6 +122,8 @@ export default function DataForm<T extends Record<string, unknown>>({
             type={field.type}
             label={field.label}
             value={value}
+            disabled={field.disabled}
+            slotProps={field.type === 'date' ? { inputLabel: { shrink: true } } : undefined}
             onChange={(e) => handleChange(field.name, e.target.value, renderKey)}
           />
         )
@@ -129,21 +153,33 @@ export default function DataForm<T extends Record<string, unknown>>({
           <div key={group.title} style={{ marginBottom: 24 }}>
             <h3>{group.title}</h3>
             {group.description && <p>{group.description}</p>}
-            <Grid container spacing={2}>
+            <Box
+              sx={{
+                display: 'grid',
+                gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
+                gap: 2,
+              }}
+            >
               {group.renderKey
                 ? group.fields.map((field) => (
-                    <Grid key={field.name}>{renderField(field, group.renderKey)}</Grid>
+                    <Box key={field.name}>{renderField(field, group.renderKey)}</Box>
                   ))
-                : group.fields.map((field) => <Grid key={field.name}>{renderField(field)}</Grid>)}
-            </Grid>
+                : group.fields.map((field) => <Box key={field.name}>{renderField(field)}</Box>)}
+            </Box>
           </div>
         ))}
       </DialogContent>
 
       <DialogActions>
         <Button onClick={onClose}>Cancel</Button>
-        <Button variant='contained' onClick={() => onSubmit(formData as T)}>
-          {initialValues ? 'Save' : 'Submit'}
+        <Button
+          variant='contained'
+          onClick={() => {
+            const finalData = { ...savedInitialValues, ...formData }
+            onSubmit(finalData as T)
+          }}
+        >
+          {savedInitialValues?.uuid ? 'Save' : 'Submit'}
         </Button>
       </DialogActions>
     </Dialog>

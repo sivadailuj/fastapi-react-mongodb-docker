@@ -1,3 +1,5 @@
+import { Column } from './column'
+
 export type FieldType = 'text' | 'number' | 'textarea' | 'select' | 'date'
 
 export interface SelectOption {
@@ -13,6 +15,7 @@ export interface InputField {
   gridWidth?: number
   options?: SelectOption[]
   loadOptions?: () => Promise<SelectOption[]>
+  disabled?: boolean
 }
 
 export interface Group {
@@ -23,7 +26,21 @@ export interface Group {
   renderKey?: string
 }
 
+export interface KeyPair {
+  localKey: string
+  parentKey: string
+}
+
+export interface RelatedTable {
+  title: string
+  entityType: string
+  initialValueKeys?: KeyPair[]
+  columns: Column<Record<string, unknown>>[]
+  form: Form
+}
+
 export interface Form {
   title: string
   groups: Group[]
+  relatedTables?: RelatedTable[]
 }

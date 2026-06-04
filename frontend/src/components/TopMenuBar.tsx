@@ -369,7 +369,6 @@ export default function TopMenuBar() {
             '&::-webkit-scrollbar': {
               display: 'none',
             },
-            /* Hide scrollbar for IE, Edge and Firefox */
             msOverflowStyle: 'none' /* IE and Edge */,
             scrollbarWidth: 'none' /* Firefox */,
             overflow: 'auto' /* Add this to ensure content can still scroll */,

@@ -1,8 +1,10 @@
-from typing import Any
+from typing import Annotated, Any
 from uuid import UUID
 from datetime import datetime
+from app.auth.auth import RoleChecker
+from app.schemas.users import UserRoles
 from beanie.exceptions import RevisionIdWasChanged
-from fastapi import APIRouter, Body, HTTPException, Response
+from fastapi import APIRouter, Body, Depends, HTTPException
 from pymongo import errors
 
 from .. import models, schemas
@@ -12,6 +14,14 @@ router = APIRouter()
 
 @router.post("", response_model=schemas.Package, status_code=201)
 async def create_package(
+    _: Annotated[
+        bool,
+        Depends(
+            RoleChecker(
+                allowed_roles=[UserRoles.PACKAGES_MANAGER, UserRoles.PACKAGES_MEMBER]
+            )
+        ),
+    ],
     package: schemas.PackageCreate = Body(...),
 ) -> Any:
     """
@@ -43,6 +53,14 @@ async def get_package(package_uuid: UUID) -> Any:
 
 @router.patch("/{package_uuid}", response_model=schemas.Package)
 async def update_package(
+    _: Annotated[
+        bool,
+        Depends(
+            RoleChecker(
+                allowed_roles=[UserRoles.PACKAGES_MANAGER, UserRoles.PACKAGES_MEMBER]
+            )
+        ),
+    ],
     package_uuid: UUID,
     package_update: schemas.PackageUpdate = Body(...),
 ) -> Any:
@@ -69,7 +87,17 @@ async def update_package(
 
 
 @router.delete("/{package_uuid}", status_code=204)
-async def delete_package(package_uuid: UUID):
+async def delete_package(
+    _: Annotated[
+        bool,
+        Depends(
+            RoleChecker(
+                allowed_roles=[UserRoles.PACKAGES_MANAGER, UserRoles.PACKAGES_MEMBER]
+            )
+        ),
+    ],
+    package_uuid: UUID,
+):
     """
     Delete a package by UUID.
     """
@@ -82,6 +110,14 @@ async def delete_package(package_uuid: UUID):
 
 @router.get("", response_model=list[schemas.Package])
 async def get_packages(
+    _: Annotated[
+        bool,
+        Depends(
+            RoleChecker(
+                allowed_roles=[UserRoles.PACKAGES_MANAGER, UserRoles.PACKAGES_MEMBER]
+            )
+        ),
+    ],
     limit: int | None = 20,
     offset: int | None = 0,
 ) -> Any:
@@ -94,6 +130,14 @@ async def get_packages(
 
 @router.get("/shipment/{shipment_uuid}", response_model=list[schemas.Package])
 async def get_packages_by_shipment(
+    _: Annotated[
+        bool,
+        Depends(
+            RoleChecker(
+                allowed_roles=[UserRoles.PACKAGES_MANAGER, UserRoles.PACKAGES_MEMBER]
+            )
+        ),
+    ],
     shipment_uuid: UUID,
     limit: int | None = 20,
     offset: int | None = 0,

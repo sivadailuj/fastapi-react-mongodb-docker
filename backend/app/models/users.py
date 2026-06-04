@@ -3,6 +3,7 @@ from uuid import UUID, uuid4
 
 from beanie import Document, Indexed
 from pydantic import EmailStr, Field
+from ..schemas.users import UserRoles
 
 
 class User(Document):
@@ -15,3 +16,4 @@ class User(Document):
     picture: str | None = None
     is_active: bool = True
     is_superuser: bool = False
+    roles: Annotated[list[UserRoles], Field(default=list)] = []

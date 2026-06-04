@@ -1,16 +1,8 @@
 import axios from 'axios'
 import { Client } from '../models/client'
-import { PaginatedResponse } from '../models/PaginatedResponse'
+import { QueryParams, PaginatedResponse } from '../models/PaginatedResponse'
 
 const API_URL = import.meta.env.VITE_BACKEND_API_URL
-
-interface ClientQueryParams {
-  offset?: number
-  limit?: number
-  search?: string
-  sortBy?: string
-  sortOrder?: number
-}
 
 class ClientService {
   async createClient(client: Client) {
@@ -33,7 +25,7 @@ class ClientService {
     return response.data
   }
 
-  async getClients(params: ClientQueryParams): Promise<PaginatedResponse<Client>> {
+  async getClients(params: QueryParams): Promise<PaginatedResponse<Client>> {
     const response = await axios.get(API_URL + 'clients', {
       params,
     })

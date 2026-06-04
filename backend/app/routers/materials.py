@@ -1,8 +1,10 @@
-from typing import Any
+from typing import Annotated, Any
 from uuid import UUID
 from datetime import datetime
+from app.auth.auth import RoleChecker
+from app.schemas.users import UserRoles
 from beanie.exceptions import RevisionIdWasChanged
-from fastapi import APIRouter, Body, HTTPException, Response
+from fastapi import APIRouter, Body, Depends, HTTPException
 from pymongo import errors
 
 from .. import models, schemas
@@ -12,6 +14,17 @@ router = APIRouter()
 
 @router.post("", response_model=schemas.Material, status_code=201)
 async def create_material(
+    _: Annotated[
+        bool,
+        Depends(
+            RoleChecker(
+                allowed_roles=[
+                    UserRoles.RAWMATERIALS_MANAGER,
+                    UserRoles.RAWMATERIALS_MEMBER,
+                ]
+            )
+        ),
+    ],
     material: schemas.MaterialCreate = Body(...),
 ) -> Any:
     """
@@ -31,7 +44,20 @@ async def create_material(
 
 
 @router.get("/{material_uuid}", response_model=schemas.Material)
-async def get_material(material_uuid: UUID) -> Any:
+async def get_material(
+    _: Annotated[
+        bool,
+        Depends(
+            RoleChecker(
+                allowed_roles=[
+                    UserRoles.RAWMATERIALS_MANAGER,
+                    UserRoles.RAWMATERIALS_MEMBER,
+                ]
+            )
+        ),
+    ],
+    material_uuid: UUID,
+) -> Any:
     """
     Get a material by UUID.
     """
@@ -43,6 +69,17 @@ async def get_material(material_uuid: UUID) -> Any:
 
 @router.patch("/{material_uuid}", response_model=schemas.Material)
 async def update_material(
+    _: Annotated[
+        bool,
+        Depends(
+            RoleChecker(
+                allowed_roles=[
+                    UserRoles.RAWMATERIALS_MANAGER,
+                    UserRoles.RAWMATERIALS_MEMBER,
+                ]
+            )
+        ),
+    ],
     material_uuid: UUID,
     material_update: schemas.MaterialUpdate = Body(...),
 ) -> Any:
@@ -69,7 +106,20 @@ async def update_material(
 
 
 @router.delete("/{material_uuid}", status_code=204)
-async def delete_material(material_uuid: UUID):
+async def delete_material(
+    _: Annotated[
+        bool,
+        Depends(
+            RoleChecker(
+                allowed_roles=[
+                    UserRoles.RAWMATERIALS_MANAGER,
+                    UserRoles.RAWMATERIALS_MEMBER,
+                ]
+            )
+        ),
+    ],
+    material_uuid: UUID,
+):
     """
     Delete a material by UUID.
     """
@@ -82,6 +132,17 @@ async def delete_material(material_uuid: UUID):
 
 @router.get("", response_model=list[schemas.Material])
 async def list_materials(
+    _: Annotated[
+        bool,
+        Depends(
+            RoleChecker(
+                allowed_roles=[
+                    UserRoles.RAWMATERIALS_MANAGER,
+                    UserRoles.RAWMATERIALS_MEMBER,
+                ]
+            )
+        ),
+    ],
     limit: int | None = 20,
     offset: int | None = 0,
 ) -> Any:
@@ -94,6 +155,17 @@ async def list_materials(
 
 @router.get("/order/{order_uuid}", response_model=list[schemas.Material])
 async def get_materials_by_order(
+    _: Annotated[
+        bool,
+        Depends(
+            RoleChecker(
+                allowed_roles=[
+                    UserRoles.RAWMATERIALS_MANAGER,
+                    UserRoles.RAWMATERIALS_MEMBER,
+                ]
+            )
+        ),
+    ],
     order_uuid: UUID,
     limit: int | None = 20,
     offset: int | None = 0,
@@ -112,6 +184,17 @@ async def get_materials_by_order(
 
 @router.get("/manufacturing/{manufacturing_uuid}", response_model=list[schemas.Material])
 async def get_materials_by_manufacturing(
+    _: Annotated[
+        bool,
+        Depends(
+            RoleChecker(
+                allowed_roles=[
+                    UserRoles.RAWMATERIALS_MANAGER,
+                    UserRoles.RAWMATERIALS_MEMBER,
+                ]
+            )
+        ),
+    ],
     manufacturing_uuid: UUID,
     limit: int | None = 20,
     offset: int | None = 0,

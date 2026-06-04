@@ -94,6 +94,9 @@ async def get_projects(
     return projects
 
 
+from fastapi import Query
+
+
 @router.get("/client/{client_uuid}", response_model=list[schemas.Project])
 async def get_projects_by_client(
     client_uuid: UUID,

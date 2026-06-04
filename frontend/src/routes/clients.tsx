@@ -4,9 +4,10 @@ import { Add, PeopleOutline } from '@mui/icons-material'
 import DataTable from '../components/DataTable'
 import SearchBar from '../components/DataTableSearchBar'
 import clientService from '../services/client.service'
-import { Client, ClientForm } from '../models/client'
+import { Client, ClientForm, ClientColumns } from '../models/client'
 import { useSnackBar } from '../contexts/snackbar'
 import DataForm from '../components/DataForm'
+import { Column } from '../models/column'
 
 export default function ClientPage() {
   const [data, setData] = useState<Array<Record<string, unknown>>>([])
@@ -33,8 +34,8 @@ export default function ClientPage() {
         sortOrder: sortOrder === 'asc' ? 1 : -1,
       })
 
-      setData(clients.items as unknown as Array<Record<string, unknown>>)
-      setTotal(clients.total)
+      setData((clients.items ?? []) as unknown as Array<Record<string, unknown>>)
+      setTotal(clients.total ?? 0)
     } catch (err) {
       console.error('Failed to fetch Client:', err)
     } finally {
@@ -45,20 +46,6 @@ export default function ClientPage() {
   useEffect(() => {
     fetchData()
   }, [page, rowsPerPage, search, sortBy, sortOrder])
-
-  const columns = [
-    { key: 'company' as keyof Client, label: 'Company' },
-    { key: 'email' as keyof Client, label: 'Email' },
-    { key: 'category' as keyof Client, label: 'Category' },
-    { key: 'street', label: 'Street', render_key: 'address' as keyof Client },
-    { key: 'city', label: 'City', render_key: 'address' as keyof Client },
-    { key: 'state', label: 'State', render_key: 'address' as keyof Client },
-    { key: 'country', label: 'Country', render_key: 'address' as keyof Client },
-    { key: 'mobile' as keyof Client, label: 'Mobile' },
-    { key: 'web_page' as keyof Client, label: 'Web Page' },
-    { key: 'notes' as keyof Client, label: 'Notes' },
-    { key: 'last_updated' as keyof Client, label: 'Last Updated' },
-  ]
 
   const handleAdd = () => {
     setEditingClient(null)
@@ -151,7 +138,6 @@ export default function ClientPage() {
           }}
           searchPlaceholder='Search clients...'
         />
-
         <>
           <Button variant='contained' startIcon={<Add />} onClick={handleAdd}>
             Add Client
@@ -174,7 +160,7 @@ export default function ClientPage() {
         <>
           <DataTable<Record<string, unknown>>
             data={Array.from(data)}
-            columns={columns}
+            columns={ClientColumns as unknown as Column<Record<string, unknown>>[]}
             totalCount={total}
             page={page}
             rowsPerPage={rowsPerPage}

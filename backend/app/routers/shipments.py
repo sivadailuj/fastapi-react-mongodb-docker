@@ -1,8 +1,10 @@
 from typing import Any
 from uuid import UUID
 from datetime import datetime
+from app.auth.auth import RoleChecker
+from app.schemas.users import UserRoles
 from beanie.exceptions import RevisionIdWasChanged
-from fastapi import APIRouter, Body, HTTPException, Response
+from fastapi import APIRouter, Body, HTTPException
 from pymongo import errors
 
 from .. import models, schemas

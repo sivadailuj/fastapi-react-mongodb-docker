@@ -89,7 +89,7 @@ wheels = [
 
 [[package]]
 name = "beanie"
-version = "1.29.0"
+version = "1.25.0"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "click" },
@@ -97,11 +97,10 @@ dependencies = [
     { name = "motor" },
     { name = "pydantic" },
     { name = "toml" },
-    { name = "typing-extensions" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/df/a1/e77d6957d17138c821ed3b7fb34a9271e33d9809eaf05c07a250cd443613/beanie-1.29.0.tar.gz", hash = "sha256:f078620c3515a8222d40a3a8ab195b1d8f1153010f009ed5d205b73371c43869", size = 174878, upload-time = "2025-01-06T17:51:01.281Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/c5/17/c37e5728bf99f9a0955b064975ca544f3a1a3eb8b170a4db1553e469d423/beanie-1.25.0.tar.gz", hash = "sha256:f153866b9ba015274102e10a397602d088fc039b705bd806cb447c898cd2979b", size = 158674, upload-time = "2024-01-25T05:28:59.134Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/04/28/f6038727827ed06659a57b3c70e6f4a339f57f92ce910f868ac928843a30/beanie-1.29.0-py3-none-any.whl", hash = "sha256:aeb53e6648ceccf70eb35c35233e45406fe4de4c9887075581c01b968bfec2c7", size = 86545, upload-time = "2025-01-06T17:50:58.483Z" },
+    { url = "https://files.pythonhosted.org/packages/da/2b/32b65d5c2327c8edb849b66dc7c69b8a753aadee411c7f1568a8b57f2bc2/beanie-1.25.0-py3-none-any.whl", hash = "sha256:4436ac740718ccd62b21576778679ac972359fce2938557890c576adbbf5e244", size = 81219, upload-time = "2024-01-25T05:28:56.008Z" },
 ]
 
 [[package]]
@@ -319,7 +318,7 @@ dev = [
 [package.metadata]
 requires-dist = [
     { name = "bcrypt", specifier = ">=4.3.0" },
-    { name = "beanie", specifier = ">=1.29.0" },
+    { name = "beanie", specifier = "==1.25.0" },
     { name = "email-validator", specifier = ">=2.2.0" },
     { name = "fastapi", extras = ["standard"], specifier = ">=0.115.12" },
     { name = "fastapi-sso", specifier = ">=0.18.0" },

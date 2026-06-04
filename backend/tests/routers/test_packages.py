@@ -9,7 +9,11 @@ from app.schemas import PackageUpdate as Update
 from app.schemas import Package as Schema
 from app.schemas.packages import PackageStatus
 
-from ..utils import verify_update_data
+from ..utils import (
+    verify_update_data,
+    create_test_user,
+    generate_user_auth_headers,
+)
 
 PREFIX = "/packages"
 
@@ -37,8 +41,12 @@ update_data = Update(
 
 @pytest.mark.anyio
 async def test_create(client: AsyncClient) -> None:
+    user = await create_test_user(["packages_member"])
+    token_headers = await generate_user_auth_headers(client, user)
     response = await client.post(
-        f"{settings.API_V1_STR}{PREFIX}", json=create_data.model_dump(mode="json")
+        f"{settings.API_V1_STR}{PREFIX}",
+        json=create_data.model_dump(mode="json"),
+        headers=token_headers,
     )
     assert response.status_code == 201
     ret_json = response.json()
@@ -47,12 +55,19 @@ async def test_create(client: AsyncClient) -> None:
 
 @pytest.mark.anyio
 async def test_get(client: AsyncClient) -> None:
+    user = await create_test_user(["packages_member"])
+    token_headers = await generate_user_auth_headers(client, user)
     response = await client.post(
-        f"{settings.API_V1_STR}{PREFIX}", json=create_data.model_dump(mode="json")
+        f"{settings.API_V1_STR}{PREFIX}",
+        json=create_data.model_dump(mode="json"),
+        headers=token_headers,
     )
     assert response.status_code == 201
     create_json = response.json()
-    response = await client.get(f"{settings.API_V1_STR}{PREFIX}/{create_json['uuid']}")
+    response = await client.get(
+        f"{settings.API_V1_STR}{PREFIX}/{create_json['uuid']}",
+        headers=token_headers,
+    )
     assert response.status_code == 200
     ret_json = response.json()
     assert Schema.model_validate(create_json) == Schema.model_validate(ret_json)
@@ -60,14 +75,19 @@ async def test_get(client: AsyncClient) -> None:
 
 @pytest.mark.anyio
 async def test_update(client: AsyncClient) -> None:
+    user = await create_test_user(["packages_member"])
+    token_headers = await generate_user_auth_headers(client, user)
     response = await client.post(
-        f"{settings.API_V1_STR}{PREFIX}", json=create_data.model_dump(mode="json")
+        f"{settings.API_V1_STR}{PREFIX}",
+        json=create_data.model_dump(mode="json"),
+        headers=token_headers,
     )
     assert response.status_code == 201
     create_json = response.json()
     response = await client.patch(
         f"{settings.API_V1_STR}{PREFIX}/{create_json['uuid']}",
         json=update_data.model_dump(exclude_unset=True, mode="json"),
+        headers=token_headers,
     )
     assert response.status_code == 200
     ret_json = response.json()
@@ -76,12 +96,22 @@ async def test_update(client: AsyncClient) -> None:
 
 @pytest.mark.anyio
 async def test_delete(client: AsyncClient) -> None:
+    user = await create_test_user(["packages_member"])
+    token_headers = await generate_user_auth_headers(client, user)
     response = await client.post(
-        f"{settings.API_V1_STR}{PREFIX}", json=create_data.model_dump(mode="json")
+        f"{settings.API_V1_STR}{PREFIX}",
+        json=create_data.model_dump(mode="json"),
+        headers=token_headers,
     )
     assert response.status_code == 201
     create_json = response.json()
-    response = await client.delete(f"{settings.API_V1_STR}{PREFIX}/{create_json['uuid']}")
+    response = await client.delete(
+        f"{settings.API_V1_STR}{PREFIX}/{create_json['uuid']}",
+        headers=token_headers,
+    )
     assert response.status_code == 204
-    response = await client.get(f"{settings.API_V1_STR}{PREFIX}/{create_json['uuid']}")
+    response = await client.get(
+        f"{settings.API_V1_STR}{PREFIX}/{create_json['uuid']}",
+        headers=token_headers,
+    )
     assert response.status_code == 404

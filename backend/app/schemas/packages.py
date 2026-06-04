@@ -45,7 +45,7 @@ class PackageCreate(PackageBase):
     pass
 
 
-class PackageUpdate(PackageBase):
+class PackageUpdate(BaseModel):
     """
     Properties to update a package. Visible by anyone.
     """

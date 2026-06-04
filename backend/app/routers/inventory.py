@@ -1,8 +1,10 @@
-from typing import Any
+from typing import Annotated, Any
 from uuid import UUID
 from datetime import datetime
+from app.auth.auth import RoleChecker
+from app.schemas.users import UserRoles
 from beanie.exceptions import RevisionIdWasChanged
-from fastapi import APIRouter, Body, HTTPException, Response
+from fastapi import APIRouter, Body, Depends, HTTPException
 from pymongo import errors
 
 from .. import models, schemas
@@ -11,7 +13,17 @@ router = APIRouter()
 
 
 @router.post("", response_model=schemas.Inventory, status_code=201)
-async def create_inventory_item(inventory: schemas.InventoryCreate = Body(...)) -> Any:
+async def create_inventory_item(
+    _: Annotated[
+        bool,
+        Depends(
+            RoleChecker(
+                allowed_roles=[UserRoles.INVENTORY_MANAGER, UserRoles.INVENTORY_MEMBER]
+            )
+        ),
+    ],
+    inventory: schemas.InventoryCreate = Body(...),
+) -> Any:
     """
     Create a new inventory item.
     """
@@ -29,7 +41,17 @@ async def create_inventory_item(inventory: schemas.InventoryCreate = Body(...)) 
 
 
 @router.get("/{inventory_uuid}", response_model=schemas.Inventory)
-async def get_inventory_item(inventory_uuid: UUID) -> Any:
+async def get_inventory_item(
+    _: Annotated[
+        bool,
+        Depends(
+            RoleChecker(
+                allowed_roles=[UserRoles.INVENTORY_MANAGER, UserRoles.INVENTORY_MEMBER]
+            )
+        ),
+    ],
+    inventory_uuid: UUID,
+) -> Any:
     """
     Get an inventory item by its UUID.
     """
@@ -41,6 +63,14 @@ async def get_inventory_item(inventory_uuid: UUID) -> Any:
 
 @router.patch("/{inventory_uuid}", response_model=schemas.Inventory)
 async def update_inventory_item(
+    _: Annotated[
+        bool,
+        Depends(
+            RoleChecker(
+                allowed_roles=[UserRoles.INVENTORY_MANAGER, UserRoles.INVENTORY_MEMBER]
+            )
+        ),
+    ],
     inventory_uuid: UUID,
     inventory_update: schemas.InventoryUpdate = Body(...),
 ) -> Any:
@@ -67,7 +97,17 @@ async def update_inventory_item(
 
 
 @router.delete("/{inventory_uuid}", status_code=204)
-async def delete_inventory_item(inventory_uuid: UUID):
+async def delete_inventory_item(
+    _: Annotated[
+        bool,
+        Depends(
+            RoleChecker(
+                allowed_roles=[UserRoles.INVENTORY_MANAGER, UserRoles.INVENTORY_MEMBER]
+            )
+        ),
+    ],
+    inventory_uuid: UUID,
+):
     """
     Delete an inventory item by its UUID.
     """
@@ -80,6 +120,14 @@ async def delete_inventory_item(inventory_uuid: UUID):
 
 @router.get("", response_model=list[schemas.Inventory])
 async def get_inventory_items(
+    _: Annotated[
+        bool,
+        Depends(
+            RoleChecker(
+                allowed_roles=[UserRoles.INVENTORY_MANAGER, UserRoles.INVENTORY_MEMBER]
+            )
+        ),
+    ],
     limit: int | None = 20,
     offset: int | None = 0,
 ) -> Any:
@@ -94,6 +142,14 @@ async def get_inventory_items(
 
 @router.get("/supplier/{supplier_uuid}", response_model=list[schemas.Inventory])
 async def get_inventory_items_by_supplier(
+    _: Annotated[
+        bool,
+        Depends(
+            RoleChecker(
+                allowed_roles=[UserRoles.INVENTORY_MANAGER, UserRoles.INVENTORY_MEMBER]
+            )
+        ),
+    ],
     supplier_uuid: UUID,
     limit: int | None = 20,
     offset: int | None = 0,

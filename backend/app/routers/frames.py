@@ -1,9 +1,12 @@
-from typing import Any
+from typing import Annotated, Any
 from uuid import UUID
 from datetime import datetime
+from app.auth.auth import RoleChecker
+from app.schemas.users import UserRoles
 from beanie.exceptions import RevisionIdWasChanged
-from fastapi import APIRouter, Body, HTTPException, Response
+from fastapi import APIRouter, Body, Depends, HTTPException
 from pymongo import errors
+from app.utils.query_builder import build_query, apply_sort, add_filters
 
 from .. import models, schemas
 
@@ -11,7 +14,15 @@ router = APIRouter()
 
 
 @router.post("", response_model=schemas.Frame, status_code=201)
-async def create_frame(frame: schemas.FrameCreate = Body(...)) -> Any:
+async def create_frame(
+    _: Annotated[
+        bool,
+        Depends(
+            RoleChecker(allowed_roles=[UserRoles.FRAMES_MANAGER, UserRoles.FRAMES_MEMBER])
+        ),
+    ],
+    frame: schemas.FrameCreate = Body(...),
+) -> Any:
     """
     Create a new frame.
     """
@@ -39,7 +50,14 @@ async def get_frame(frame_uuid: UUID) -> Any:
 
 @router.patch("/{frame_uuid}", response_model=schemas.Frame)
 async def update_frame(
-    frame_uuid: UUID, frame_update: schemas.FrameUpdate = Body(...)
+    _: Annotated[
+        bool,
+        Depends(
+            RoleChecker(allowed_roles=[UserRoles.FRAMES_MANAGER, UserRoles.FRAMES_MEMBER])
+        ),
+    ],
+    frame_uuid: UUID,
+    frame_update: schemas.FrameUpdate = Body(...),
 ) -> Any:
     """
     Update a frame by UUID.
@@ -63,7 +81,15 @@ async def update_frame(
 
 
 @router.delete("/{frame_uuid}", status_code=204)
-async def delete_frame(frame_uuid: UUID):
+async def delete_frame(
+    _: Annotated[
+        bool,
+        Depends(
+            RoleChecker(allowed_roles=[UserRoles.FRAMES_MANAGER, UserRoles.FRAMES_MEMBER])
+        ),
+    ],
+    frame_uuid: UUID,
+):
     """
     Delete a frame by UUID.
     """
@@ -74,20 +100,54 @@ async def delete_frame(frame_uuid: UUID):
     await frame.delete()
 
 
-@router.get("", response_model=list[schemas.Frame])
+@router.get("")
 async def get_frames(
-    limit: int | None = 20,
-    offset: int | None = 0,
-) -> Any:
-    """
-    List all frames.
-    """
-    frames = await models.Frame.find_all().skip(offset).limit(limit).to_list()
-    return frames
+        _: Annotated[
+            bool,
+            Depends(
+                RoleChecker(allowed_roles=[UserRoles.FRAMES_MANAGER, UserRoles.FRAMES_MEMBER])
+            ),
+        ],
+    sortBy: str | None = None,
+    sortOrder: int = 1,
+    search: str | None = None,
+    limit: int = 20,
+    offset: int = 0,
+):
+    SEARCH_FIELDS = [
+        "client_uuid",
+        "project_uuid",
+        "package_uuid",
+        "ppo_id",
+        "name",
+        "type",
+        "nwt",
+        "assembly_file",
+        "machine",
+        "status",
+        "last_updated",
+    ]
 
+    mongo_query = build_query(search, SEARCH_FIELDS)
+
+    base_query = models.Frame.find(mongo_query)
+
+    total = await base_query.count()
+
+    base_query = apply_sort(base_query, sortBy, sortOrder, SEARCH_FIELDS)
+
+    frames = await base_query.skip(offset).limit(limit).to_list()
+
+    return {"items": frames, "total": total}
 
 @router.get("/package/{package_uuid}", response_model=list[schemas.Frame])
 async def get_frames_by_package(
+    _: Annotated[
+        bool,
+        Depends(
+            RoleChecker(allowed_roles=[UserRoles.FRAMES_MANAGER, UserRoles.FRAMES_MEMBER])
+        ),
+    ],
     package_uuid: UUID,
     limit: int | None = 20,
     offset: int | None = 0,
@@ -95,8 +155,11 @@ async def get_frames_by_package(
     """
     List frames by package UUID.
     """
+    mongo_query = {}
+    add_filters(mongo_query, {"package_uuid": package_uuid})
+    
     frames = (
-        await models.Frame.find(models.Frame.package_uuid == package_uuid)
+        await models.Frame.find(mongo_query)
         .skip(offset)
         .limit(limit)
         .to_list()

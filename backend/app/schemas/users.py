@@ -1,7 +1,33 @@
+from enum import Enum
 from uuid import UUID
 
 from beanie import PydanticObjectId
 from pydantic import BaseModel, EmailStr, Field
+
+
+class UserRoles(Enum):
+    """
+    Enum for user roles.
+    """
+
+    USER = "user"
+    ADMIN = "admin"
+    DEBUGGER = "debugger"
+    DEBUGGER_MAX = "debugger_max"
+    INVENTORY_MANAGER = "inventory_manager"
+    INVENTORY_MEMBER = "inventory_member"
+    RAWMATERIALS_MANAGER = "rawmaterials_manager"
+    RAWMATERIALS_MEMBER = "rawmaterials_member"
+    PIECES_MANAGER = "pieces_manager"
+    PIECES_MEMBER = "pieces_member"
+    FRAMES_MANAGER = "frames_manager"
+    FRAMES_MEMBER = "frames_member"
+    PACKAGES_MANAGER = "packages_manager"
+    PACKAGES_MEMBER = "packages_member"
+    SHIPMENTS_MANAGER = "shipments_manager"
+    SHIPMENTS_MEMBER = "shipments_member"
+    PPO_MANAGER = "ppo_manager"
+    PPO_MEMBER = "ppo_member"
 
 
 class UserBase(BaseModel):
@@ -23,6 +49,7 @@ class PrivateUserBase(UserBase):
     is_active: bool | None = None
     is_superuser: bool | None = None
     provider: str | None = None
+    roles: list[UserRoles] | None = None
 
 
 class UserUpdate(UserBase):

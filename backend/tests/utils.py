@@ -40,10 +40,10 @@ def random_email() -> str:
     return f"{random_lower_string()}@{random_lower_string()}.com"
 
 
-async def create_test_user() -> User:
+async def create_test_user(roles: list[str] | None = None) -> User:
     email = random_email()
     hashed_password = get_hashed_password(random_lower_string())
-    user = User(email=email, hashed_password=hashed_password)
+    user = User(email=email, hashed_password=hashed_password, roles=roles or [])
     await user.create()
     return user
 

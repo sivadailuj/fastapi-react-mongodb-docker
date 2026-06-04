@@ -46,7 +46,7 @@ class InventoryBase(BaseModel):
         ..., description="The width in inches of the inventory item."
     )
     bay: str = Field(..., description="The bay of the inventory item.")
-    bl: str = Field(..., description="The BL of the inventory item.")
+    bi: str = Field(..., description="The BL of the inventory item.")
     pl: str = Field(..., description="The PL of the inventory item.")
     po: str = Field(..., description="The PO of the inventory item.")
 
@@ -94,7 +94,7 @@ class InventoryUpdate(BaseModel):
         default=None, description="The width in inches of the inventory item."
     )
     bay: str | None = Field(default=None, description="The bay of the inventory item.")
-    bl: str | None = Field(default=None, description="The BL of the inventory item.")
+    bi: str | None = Field(default=None, description="The BI of the inventory item.")
     pl: str | None = Field(default=None, description="The PL of the inventory item.")
     po: str | None = Field(default=None, description="The PO of the inventory item.")
 

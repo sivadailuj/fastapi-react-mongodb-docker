@@ -1,7 +1,8 @@
 from datetime import datetime, timedelta, timezone
-from typing import Any
+from typing import Any, Annotated
 from uuid import UUID
 
+from app.schemas.users import User
 from fastapi import Depends, HTTPException, Request, status
 from fastapi.openapi.models import OAuthFlowPassword
 from fastapi.openapi.models import OAuthFlows as OAuthFlowsModel
@@ -63,7 +64,6 @@ oauth2_scheme = OAuth2PasswordBearer(tokenUrl=f"{settings.API_V1_STR}/login/acce
 oauth2_scheme_with_cookies = OAuth2PasswordBearerWithCookie(
     tokenUrl=f"{settings.API_V1_STR}/login/access-token"
 )
-
 
 
 def get_hashed_password(password: str) -> str:
@@ -147,3 +147,19 @@ def get_current_active_superuser(
             status_code=400, detail="The user doesn't have enough privileges"
         )
     return current_user
+
+
+class RoleChecker:
+    def __init__(self, allowed_roles):
+        self.allowed_roles = allowed_roles
+
+    def __call__(self, user: Annotated[User, Depends(get_current_active_user)]):
+        for role in user.roles or []:
+            if role in self.allowed_roles:
+                return True
+        if user.is_superuser:
+            return True
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="You don't have enough permissions",
+        )

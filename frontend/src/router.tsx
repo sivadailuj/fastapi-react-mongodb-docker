@@ -9,8 +9,17 @@ import Root from './routes/root'
 import SSOLogin, { loader as ssoLoader } from './routes/sso.login'
 import Users, { loader as usersLoader } from './routes/users'
 import QR from './routes/qr'
-//import Clients, { loader as clientsLoader } from './routes/clients'
 import Clients from './routes/clients'
+import Frames from './routes/frames'
+import Inventory from './routes/inventory'
+import Projects from './routes/projects'
+import Orders from './routes/orders'
+import Suppliers from './routes/suppliers'
+import Materials from './routes/materials'
+import Manufacturing from './routes/manufacturing'
+import Packages from './routes/packages'
+import Shipments from './routes/shipments'
+import Estimates from './routes/estimates'
 import ProtectedRoute from './components/ProtectedRoute'
 
 export const routes = [
@@ -75,7 +84,86 @@ export const routes = [
             <Clients />
           </ProtectedRoute>
         ),
-        //loader: clientsLoader,
+      },
+      {
+        path: 'projects',
+        element: (
+          <ProtectedRoute>
+            <Projects />
+          </ProtectedRoute>
+        ),
+      },
+      {
+        path: 'orders',
+        element: (
+          <ProtectedRoute>
+            <Orders />
+          </ProtectedRoute>
+        ),
+      },
+      {
+        path: 'suppliers',
+        element: (
+          <ProtectedRoute>
+            <Suppliers />
+          </ProtectedRoute>
+        ),
+      },
+      {
+        path: 'inventory',
+        element: (
+          <ProtectedRoute>
+            <Inventory />
+          </ProtectedRoute>
+        ),
+      },
+      {
+        path: 'materials',
+        element: (
+          <ProtectedRoute>
+            <Materials />
+          </ProtectedRoute>
+        ),
+      },
+      {
+        path: 'manufacturing',
+        element: (
+          <ProtectedRoute>
+            <Manufacturing />
+          </ProtectedRoute>
+        ),
+      },
+      {
+        path: 'frames',
+        element: (
+          <ProtectedRoute>
+            <Frames />
+          </ProtectedRoute>
+        ),
+      },
+      {
+        path: 'packages',
+        element: (
+          <ProtectedRoute>
+            <Packages />
+          </ProtectedRoute>
+        ),
+      },
+      {
+        path: 'shipments',
+        element: (
+          <ProtectedRoute>
+            <Shipments />
+          </ProtectedRoute>
+        ),
+      },
+      {
+        path: 'estimates',
+        element: (
+          <ProtectedRoute>
+            <Estimates />
+          </ProtectedRoute>
+        ),
       },
     ],
   },

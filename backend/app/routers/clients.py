@@ -1,8 +1,6 @@
-import re
 from typing import Any
 from uuid import UUID
 from datetime import datetime
-from beanie import SortDirection
 from beanie.exceptions import RevisionIdWasChanged
 from fastapi import APIRouter, Body, HTTPException
 from pymongo import errors
@@ -114,7 +112,4 @@ async def get_clients(
 
     clients = await base_query.skip(offset).limit(limit).to_list()
 
-    return {
-        "items": clients,
-        "total": total
-    }
+    return {"items": clients, "total": total}
